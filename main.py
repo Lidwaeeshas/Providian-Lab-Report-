@@ -10,8 +10,7 @@ class ReportRequest(BaseModel):
 
 app = FastAPI()
 
-# Mount your static file directories securely
-app.mount("/static", StaticFiles(directory="static"), name="static")
+
 print("Starting FastAPI backend server application...")
 
 @app.get("/")
