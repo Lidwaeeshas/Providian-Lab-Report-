@@ -206,83 +206,31 @@
                 <meta charset="UTF-8">
                 <title>Lab Report</title>
                 <style>
-    * { 
-        margin: 0; 
-        padding: 0; 
-        box-sizing: border-box; 
-    }
-    
-    /* PAGE SETUP - Reserve space at bottom for footer on EVERY page */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     @page {
         size: A4;
-        margin-top: 15mm;
-        margin-left: 20mm;
-        margin-right: 20mm;
-        margin-bottom: 70mm;  /* IMPORTANT: Reserve space for footer */
+        margin: 20mm; /* Clean margins on all sides */
     }
-
-    html, body { 
-        margin: 0;
-        padding: 0;
-        height: 100%;
-    }
-
-    body { 
-        font-family: Arial, sans-serif; 
-        background: white; 
-        color: #000;
-        line-height: 1.6;
-    }
-
-    .container { 
+    body { font-family: Arial, sans-serif; background: white; color: #000; line-height: 1.6; }
+    
+    /* THE PRINT ENGINE SECRET: Use a table layout */
+    .print-table {
         width: 100%;
-        min-height: 297mm;  /* Full A4 height */
-        position: relative;
-        padding-bottom: 60mm;  /* Space for footer */
+        border-collapse: collapse;
     }
-
-    .header { 
-        text-align: center; 
-        padding-bottom: 15px; 
-        border-bottom: 1.5px solid #0096ff; 
-        margin-bottom: 35px;
+    
+    /* This creates a clean space at the bottom of EVERY page for the footer */
+    .footer-spacer {
+        height: 60mm; 
     }
-
-    .logo { 
-        font-size: 26px; 
-        font-weight: bold; 
-        margin-bottom: 5px; 
-    }
-
-    .meta-line { 
-        font-size: 12px; 
-        color: #333; 
-        line-height: 1.6; 
-    }
-
-    .report-area { 
-        width: 100%; 
-        margin-top: 20px; 
-        margin-bottom: 40px;
-    }
-
-    .report { 
-        width: 100%; 
-        line-height: 1.6; 
-        font-size: 16px; 
-        white-space: pre-wrap; 
-        word-wrap: break-word; 
-        page-break-inside: auto; 
-    }
-
-    /* FOOTER - Fixed at bottom, appears on EVERY page */
+    
+    /* This locks the footer strictly to the bottom of the printed page without drifting */
     .footer-info { 
         position: fixed;
-        bottom: -55mm;  /* Distance from bottom */
-        left: 20mm;
-        right: 20mm;
-        width: calc(100% - 40mm);
-        height: 40mm;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 50mm;
         display: flex; 
         justify-content: space-between; 
         align-items: center; 
@@ -290,57 +238,57 @@
         border-top: 1.5px solid #0096ff; 
         background: white;
         padding-top: 10px;
-        z-index: 100;
     }
+    .footer-item { flex: 1; }
+    .footer-item span { font-weight: bold; }
+    .signature-image { max-height: 45px; vertical-align: middle; }
+    
+    .header { text-align: center; padding-bottom: 15px; border-bottom: 1.5px solid #0096ff; margin-bottom: 35px; }
+    .report { width: 100%; line-height: 1.6; font-size: 16px; white-space: pre-wrap; word-wrap: break-word; }
+</style>
 
-    .footer-item { 
-        flex: 1; 
-    }
-
-    .footer-item span { 
-        font-weight: bold; 
-    }
-
-    .signature-image { 
-        max-height: 45px; 
-        vertical-align: middle; 
-    }
-                </style>
-            </head>
-            <body>
-                <div class="container">
+<body>
+    <!-- The layout table protects your text flow -->
+    <table class="print-table">
+        <tbody>
+            <tr>
+                <td>
                     <div class="header">
-                        <img src="https://www.image2url.com/r2/default/images/1787929785565-a8372713-bc5b-405f-91d4-88cdf911773e.png" alt="Logo" style="max-height: 60px; margin-bottom: 10px;">
+                        <img src="https://image2url.com" alt="Logo" style="max-height: 60px; margin-bottom: 10px;">
                     </div>
                     
-                    <section class="report-area">
-                        <div class="report">${typedText.replace(/\n/g, '<br>')}</div>
-                    </section>
-                </div>
+                    <div class="report">${typedText.replace(/\n/g, '<br>')}</div>
+                </td>
+            </tr>
+        </tbody>
+        
+        <!-- The invisible tfoot reserves the footer spacing automatically on every page -->
+        <tfoot>
+            <tr>
+                <td>
+                    <div class="footer-spacer"></div>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
 
-                <!-- FOOTER - Stays at bottom of every page -->
-                <div class="footer-info">
-            <div class="footer-item">
-                <label>
-                    Sagir Usman<br><br>
-                    <span>(Medical Ultrasound Specialist)</span>
-                </label>
-            </div>
-            <div class="footer-item">
-                <label>
-                    <img src="https://www.image2url.com/r2/default/images/1787902784266-ca6258c0-02a4-41ab-b9da-d7180506280b.jpg" alt="Signature" class="signature-image"><br><br>
-                    <span>Signature:</span>
-                </label>
-            </div>
-            <div class="footer-item">
-                <label>
-                    
-                    <span id="date" style="font-weight:normal">${todayISO}</span><br><br>
-                    <span>Date</span>
-                </label>
-            </div>
+    <!-- The actual footer overlay -->
+    <div class="footer-info">
+        <div class="footer-item">
+            <label>Sagir Usman<br><br><span>(Medical Ultrasound Specialist)</span></label>
         </div>
-            </body>
+        <div class="footer-item">
+            <label>
+                <img src="https://image2url.com" alt="Signature" class="signature-image"><br><br>
+                <span>Signature:</span>
+            </label>
+        </div>
+        <div class="footer-item">
+            <label><span id="date" style="font-weight:normal">Loading...</span><br><br><span>Date</span></label>
+        </div>
+    </div>
+</body>
+
             </html>`;
 
             try {
