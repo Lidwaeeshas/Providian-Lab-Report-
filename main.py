@@ -16,7 +16,7 @@ print("Starting FastAPI backend server application...")
 
 @app.get("/")
 def read_root():
-    with open("lab_report.html", "r") as f:
+    with open("/template/index.html", "r") as f:
         html_content = f.read()
     return HTMLResponse(content=html_content, media_type="text/html")
 
