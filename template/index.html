@@ -150,7 +150,7 @@
             </div>
         </div>
 
-        <!-- TEXT AREA FOR DAD TO TYPE IN -->
+        <!-- TEXT AREA FOR REPORT INPUT -->
         <section class="report-area">
             <div id="input-field" contenteditable="true" class="report" placeholder="Type report text here..."></div>
         </section>
@@ -204,25 +204,33 @@
                 return;
             }
 
-            // We build a pristine HTML blueprint specifically optimized for WeasyPrint.
-            // It completely skips dynamic browser JavaScript tags to stop PDF engine crashes!
+            // FINAL SOLUTION - Footer always at bottom, even with minimal content
             const pristineHtmlLayout = `
             <!DOCTYPE html>
             <html>
             <head>
                 <meta charset="UTF-8">
                 <title>Lab Report</title>
-        <style>
+                <style>
     * { 
         margin: 0; 
         padding: 0; 
         box-sizing: border-box; 
     }
     
-    /* 1. Define the total size of the sheet of paper */
+    /* PAGE SETUP - Reserve space at bottom for footer on EVERY page */
     @page {
         size: A4;
-        margin: 0; /* Clear out default margins so our code handles position layout entirely */
+        margin-top: 25mm;
+        margin-left: 20mm;
+        margin-right: 20mm;
+        margin-bottom: 55mm;  /* IMPORTANT: Reserve space for footer */
+    }
+
+    html, body { 
+        margin: 0;
+        padding: 0;
+        height: 100%;
     }
 
     body { 
@@ -230,19 +238,13 @@
         background: white; 
         color: #000;
         line-height: 1.6;
-        padding: 0;
-        margin: 0;
     }
 
-    /* 2. Create a structural box wrapper that fills up the total A4 paper page height */
     .container { 
         width: 100%;
-        min-height: 297mm; 
-        position: relative; 
-        padding-top: 25mm;
-        padding-left: 20mm;
-        padding-right: 20mm;
-        padding-bottom: 45mm; 
+        min-height: 297mm;  /* Full A4 height */
+        position: relative;
+        padding-bottom: 60mm;  /* Space for footer */
     }
 
     .header { 
@@ -250,7 +252,6 @@
         padding-bottom: 15px; 
         border-bottom: 1.5px solid #0096ff; 
         margin-bottom: 35px;
-        margin-top:-60px;
     }
 
     .logo { 
@@ -268,6 +269,7 @@
     .report-area { 
         width: 100%; 
         margin-top: 20px; 
+        margin-bottom: 40px;
     }
 
     .report { 
@@ -279,19 +281,22 @@
         page-break-inside: auto; 
     }
 
-    /* 3. THE FIXED HOOK: Pins the elements directly to the bottom line of the 297mm page box */
+    /* FOOTER - Fixed at bottom, appears on EVERY page */
     .footer-info { 
-        position: absolute;
-        bottom: 10mm; 
+        position: fixed;
+        bottom: 15mm;  /* Distance from bottom */
         left: 20mm;
         right: 20mm;
+        width: calc(100% - 40mm);
+        height: 50mm;
         display: flex; 
         justify-content: space-between; 
         align-items: center; 
         font-size: 12px; 
         border-top: 1.5px solid #0096ff; 
-        padding-top: 15px;
         background: white;
+        padding-top: 10px;
+        z-index: 100;
     }
 
     .footer-item { 
@@ -306,9 +311,7 @@
         max-height: 45px; 
         vertical-align: middle; 
     }
-</style>
-
-
+                </style>
             </head>
             <body>
                 <div class="container">
@@ -325,12 +328,13 @@
                     <section class="report-area">
                         <div class="report">${typedText.replace(/\n/g, '<br>')}</div>
                     </section>
+                </div>
 
-                    <div class="footer-info">
-                        <div class="footer-item"><span>Diagnostician:</span> Dr Sagir Usman</div>
-                        <div class="footer-item"><span>Signature:</span> <img src="static/signature.png" alt="Signature" class="signature-image"></div>
-                        <div class="footer-item"><span>Date: ${todayISO}</span></div>
-                    </div>
+                <!-- FOOTER - Stays at bottom of every page -->
+                <div class="footer-info">
+                    <div class="footer-item"><span>Diagnostician:</span> Dr Sagir Usman</div>
+                    <div class="footer-item"><span>Signature:</span> <img src="static/signature.png" alt="Signature" class="signature-image"></div>
+                    <div class="footer-item"><span>Date: ${todayISO}</span></div>
                 </div>
             </body>
             </html>`;
